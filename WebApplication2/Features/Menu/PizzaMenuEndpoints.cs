@@ -52,6 +52,8 @@ public static class PizzaMenuEndpoints
 
             return TypedResults.NoContent();
         })
+        .RequireAuthorization("edit_menu")
+        .EnableOpenApiWithAuthentication()
         .AddEndpointFilter(ValidatePizzaUpdateRequest)
         .WithName("Update Pizza In Menu")
         .WithOpenApi();
@@ -62,6 +64,8 @@ public static class PizzaMenuEndpoints
             await db.SaveChangesAsync();
             return TypedResults.Created($"/api/PizzaMenu/{pizzaInMenu.Id}", pizzaInMenu);
         })
+        .RequireAuthorization("edit_menu")
+        .EnableOpenApiWithAuthentication()
         .WithName("Create Pizza In Menu")
         .WithOpenApi();
 
@@ -76,6 +80,8 @@ public static class PizzaMenuEndpoints
 
             return TypedResults.NotFound();
         })
+        .RequireAuthorization("edit_menu")
+        .EnableOpenApiWithAuthentication()
         .WithName("Delete Pizza From Menu")
         .WithOpenApi();
     }
