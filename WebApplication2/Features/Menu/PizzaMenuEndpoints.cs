@@ -52,6 +52,7 @@ public static class PizzaMenuEndpoints
 
             return TypedResults.NoContent();
         })
+        .AddEndpointFilter(ValidatePizzaUpdateRequest)
         .WithName("Update Pizza In Menu")
         .WithOpenApi();
 
@@ -82,4 +83,18 @@ public static class PizzaMenuEndpoints
     record PizzaListItemDto(int Id, string Name, string Price);
     record PizzaDetailsDto(int Id, string Name, string Desc, string Price);
     record PizzaUpdateDto(string Name, string Desc, decimal Price);
+
+    static async ValueTask<object?> ValidatePizzaUpdateRequest(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
+    {
+        var updateDto = context.GetArgument<PizzaUpdateDto>(1);
+
+        if (string.IsNullOrWhiteSpace(updateDto?.Name))
+        {
+            var error = new Dictionary<string, string[]> { { "Name", new[] { "Name cannot be empty" } } };
+
+            return Results.ValidationProblem(error);
+        }
+
+        return await next(context);
+    }
 }
